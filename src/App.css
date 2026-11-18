@@ -34,3 +34,39 @@ h2 {
 
 button {
   background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+button.secundario {
+  background: #64748b;
+}
+
+button.secundario:hover:not(:disabled) {
+  background: #475569;
+}
+
+input {
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  min-width: 0;
+}
+
+.tarjeta {
+  background: #fff;
+  border-radius: 8px;
