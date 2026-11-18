@@ -180,3 +180,29 @@ export default function App() {
               <th>Salario/hora</th>
               <th>Horas</th>
               <th>Bonificación</th>
+              <th>Salario</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {empleados.map((e) => {
+              const s = salarios[e.indice];
+              const abierto = panel && panel.indice === e.indice;
+              return [
+                <tr key={e.indice}>
+                  <td>{e.indice}</td>
+                  <td>{e.nombre}</td>
+                  <td>{pesos(e.salarioHora)}</td>
+                  <td>{e.horasTrabajadas}</td>
+                  <td>{pesos(e.bonificacion)}</td>
+                  <td>
+                    {s?.cargando && <span className="cargando">Calculando...</span>}
+                    {s?.valor !== undefined && <strong>{pesos(s.valor)}</strong>}
+                    {s?.error && <span className="error-texto">{s.error}</span>}
+                  </td>
+                  <td className="acciones">
+                    <button onClick={() => calcular(e.indice)}>Calcular</button>
+                    <button className="secundario" onClick={() => abrirEditar(e)}>Editar</button>
+                    <button className="secundario" onClick={() => abrirHoras(e)}>Horas</button>
+                  </td>
+                </tr>,
