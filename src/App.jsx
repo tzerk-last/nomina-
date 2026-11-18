@@ -206,3 +206,29 @@ export default function App() {
                     <button className="secundario" onClick={() => abrirHoras(e)}>Horas</button>
                   </td>
                 </tr>,
+                abierto && (
+                  <tr key={`panel-${e.indice}`} className="fila-panel">
+                    <td colSpan={7}>
+                      {panel.tipo === "editar" ? (
+                        <div className="formulario">
+                          <input
+                            value={panel.datos.nombre}
+                            onChange={(ev) => setPanel({ ...panel, datos: { ...panel.datos, nombre: ev.target.value } })}
+                          />
+                          <input
+                            type="number" min="0" value={panel.datos.salarioHora}
+                            onChange={(ev) => setPanel({ ...panel, datos: { ...panel.datos, salarioHora: ev.target.value } })}
+                          />
+                          <input
+                            type="number" min="0" value={panel.datos.horasTrabajadas}
+                            onChange={(ev) => setPanel({ ...panel, datos: { ...panel.datos, horasTrabajadas: ev.target.value } })}
+                          />
+                          <input
+                            type="number" min="0" value={panel.datos.bonificacion}
+                            onChange={(ev) => setPanel({ ...panel, datos: { ...panel.datos, bonificacion: ev.target.value } })}
+                          />
+                          <button onClick={guardarEditar}>Guardar</button>
+                          <button className="secundario" onClick={() => setPanel(null)}>Cancelar</button>
+                        </div>
+                      ) : (
+                        <div className="formulario">
