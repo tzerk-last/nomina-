@@ -76,3 +76,29 @@ export default function App() {
       setNuevo(FORMULARIO_VACIO);
     }, "Empleado creado.");
   }
+
+  // GET /empleados/{i}/salario
+  async function calcular(indice) {
+    setSalarios((s) => ({ ...s, [indice]: { cargando: true } }));
+    try {
+      const datos = await peticion("GET", `/empleados/${indice}/salario`);
+      setSalarios((s) => ({ ...s, [indice]: { valor: datos.salario } }));
+    } catch (e) {
+      setSalarios((s) => ({ ...s, [indice]: { error: e.message } }));
+    }
+  }
+
+  function abrirEditar(e) {
+    setPanel({
+      tipo: "editar",
+      indice: e.indice,
+      datos: {
+        nombre: e.nombre,
+        salarioHora: e.salarioHora,
+        horasTrabajadas: e.horasTrabajadas,
+        bonificacion: e.bonificacion,
+      },
+    });
+  }
+
+  function abrirHoras(e) {
