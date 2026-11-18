@@ -232,3 +232,23 @@ export default function App() {
                         </div>
                       ) : (
                         <div className="formulario">
+                          <input
+                            placeholder="Horas por día, separadas por coma (ej. 8, 10, 12)"
+                            value={panel.texto}
+                            onChange={(ev) => setPanel({ ...panel, texto: ev.target.value })}
+                          />
+                          <button onClick={guardarHoras}>Registrar</button>
+                          <button className="secundario" onClick={() => setPanel(null)}>Cancelar</button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ),
+              ];
+            })}
+          </tbody>
+        </table>
+      )}
+    </main>
+  );
+}
