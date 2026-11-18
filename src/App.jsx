@@ -50,3 +50,29 @@ export default function App() {
       setCargando(false);
     }
   }
+
+  useEffect(() => {
+    cargar();
+  }, []);
+
+  // Ejecuta una acción de escritura, muestra el resultado y recarga la lista
+  async function ejecutar(accion, mensajeOk) {
+    setError("");
+    setAviso("");
+    try {
+      await accion();
+      setAviso(mensajeOk);
+      await cargar();
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  // POST /empleados
+  function crear(evento) {
+    evento.preventDefault();
+    ejecutar(async () => {
+      await peticion("POST", "/empleados", nuevo);
+      setNuevo(FORMULARIO_VACIO);
+    }, "Empleado creado.");
+  }
