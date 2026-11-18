@@ -106,3 +106,40 @@ td {
 
 th {
   background: #e2e8f0;
+  font-weight: 600;
+}
+
+.acciones {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.fila-panel td {
+  background: #f8fafc;
+}
+
+.mensaje {
+  background: #fff;
+  padding: 14px;
+  border-radius: 8px;
+  margin: 0 0 16px;
+}
+
+.mensaje.error {
+  background: #fee2e2;
+}
+
+.mensaje.exito {
+  background: #dcfce7;
+}
+
+.mensaje.error,
+.error-texto {
+  color: #b91c1c;
+}
+
+.cargando {
+  color: #64748b;
+  font-style: italic;
+}
