@@ -102,3 +102,29 @@ export default function App() {
   }
 
   function abrirHoras(e) {
+    setPanel({ tipo: "horas", indice: e.indice, texto: "" });
+  }
+
+  // PUT /empleados/{i}
+  function guardarEditar() {
+    const { indice, datos } = panel;
+    ejecutar(async () => {
+      await peticion("PUT", `/empleados/${indice}`, datos);
+      setPanel(null);
+    }, "Empleado actualizado.");
+  }
+
+  // POST /empleados/{i}/horas
+  function guardarHoras() {
+    const { indice, texto } = panel;
+    const dias = texto.split(",").map((s) => s.trim()).filter((s) => s !== "");
+    if (dias.length === 0) {
+      setError("Escribe las horas de cada día separadas por coma, por ejemplo: 8, 10, 12.");
+      return;
+    }
+    ejecutar(async () => {
+      await peticion("POST", `/empleados/${indice}/horas`, { horas: dias.map(Number) });
+      setPanel(null);
+    }, "Horas registradas.");
+  }
+
