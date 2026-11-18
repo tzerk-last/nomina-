@@ -154,3 +154,29 @@ export default function App() {
             onChange={(e) => setNuevo({ ...nuevo, salarioHora: e.target.value })}
           />
           <input
+            type="number" min="0" placeholder="Horas"
+            value={nuevo.horasTrabajadas}
+            onChange={(e) => setNuevo({ ...nuevo, horasTrabajadas: e.target.value })}
+          />
+          <input
+            type="number" min="0" placeholder="Bonificación"
+            value={nuevo.bonificacion}
+            onChange={(e) => setNuevo({ ...nuevo, bonificacion: e.target.value })}
+          />
+          <button type="submit">Crear</button>
+        </form>
+      </section>
+
+      {!error && !cargando && empleados.length === 0 && (
+        <p className="mensaje">No hay empleados registrados. Crea el primero arriba.</p>
+      )}
+
+      {empleados.length > 0 && (
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>Salario/hora</th>
+              <th>Horas</th>
+              <th>Bonificación</th>
