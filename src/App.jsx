@@ -128,3 +128,29 @@ export default function App() {
     }, "Horas registradas.");
   }
 
+  return (
+    <main className="contenedor">
+      <header className="cabecera">
+        <h1>Liquidación de nómina</h1>
+        <button onClick={cargar} disabled={cargando}>
+          {cargando ? "Cargando..." : "Actualizar lista"}
+        </button>
+      </header>
+
+      {error && <p className="mensaje error">{error}</p>}
+      {aviso && !error && <p className="mensaje exito">{aviso}</p>}
+
+      <section className="tarjeta">
+        <h2>Nuevo empleado</h2>
+        <form className="formulario" onSubmit={crear}>
+          <input
+            placeholder="Nombre"
+            value={nuevo.nombre}
+            onChange={(e) => setNuevo({ ...nuevo, nombre: e.target.value })}
+          />
+          <input
+            type="number" min="0" placeholder="Salario por hora"
+            value={nuevo.salarioHora}
+            onChange={(e) => setNuevo({ ...nuevo, salarioHora: e.target.value })}
+          />
+          <input
