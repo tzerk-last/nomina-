@@ -382,3 +382,51 @@ public class Main {
     /**
      * PUT /empleados/{i}: actualiza los campos enviados. Todo se valida antes
      * de tocar el objeto, así que una entrada inválida no deja cambios a medias.
+     */
+    private static void modificarDesdeApi(HttpExchange ex, String idx) throws IOException {
+        Empleado actual = obtener(parseIndice(idx));
+        if (actual == null) {
+            responder(ex, 404, "{\"error\": \"Empleado no encontrado\"}");
+            return;
+        }
+        try {
+            Map<String, String> d = leerJson(ex);
+            String nombre = d.containsKey("nombre") ? d.get("nombre") : actual.getNombre();
+            double salario = d.containsKey("salarioHora")
+                    ? numeroDe(d.get("salarioHora"), "salarioHora") : actual.getSalarioHora();
+            int horas = d.containsKey("horasTrabajadas")
+                    ? enteroDe(d.get("horasTrabajadas"), "horasTrabajadas") : actual.getHorasTrabajadas();
+            double bono = d.containsKey("bonificacion")
+                    ? numeroDe(d.get("bonificacion"), "bonificacion") : actual.getBonificacion();
+
+            Empleado validado = new Empleado(nombre, salario, horas, bono); // valida todo
+            synchronized (empleados) {
+                actual.setNombre(validado.getNombre());
+                actual.setSalarioHora(validado.getSalarioHora());
+                actual.setHorasTrabajadas(validado.getHorasTrabajadas());
+                actual.setBonificacion(validado.getBonificacion());
+            }
+            responder(ex, 200, "{\"ok\": true}");
+        } catch (IllegalArgumentException e) {
+            responder(ex, 400, errorJson(e.getMessage()));
+        }
+    }
+
+    /**
+     * POST /empleados/{i}/horas con {"horas": [8, 10, 12]}: cada día se valida
+     * (0 a 24) y el total reemplaza horasTrabajadas, igual que registrarHoras().
+     */
+    private static void registrarHorasDesdeApi(HttpExchange ex, String idx) throws IOException {
+        Empleado e = obtener(parseIndice(idx));
+        if (e == null) {
+            responder(ex, 404, "{\"error\": \"Empleado no encontrado\"}");
+            return;
+        }
+        try {
+            String lista = obligatorio(leerJson(ex), "horas");
+            if (!lista.startsWith("[") || !lista.endsWith("]")) {
+                throw new IllegalArgumentException("'horas' debe ser una lista, por ejemplo [8, 10, 12].");
+            }
+            String interior = lista.substring(1, lista.length() - 1).trim();
+            if (interior.isEmpty()) {
+                throw new IllegalArgumentException("Debes enviar al menos un día.");
