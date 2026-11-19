@@ -334,3 +334,51 @@ public class Main {
                 && metodo.equalsIgnoreCase("POST")) {
             registrarHorasDesdeApi(ex, partes[2]);
             return;
+        }
+
+        // GET /empleados/{i}/salario
+        if (partes.length == 4 && partes[1].equals("empleados") && partes[3].equals("salario")
+                && metodo.equalsIgnoreCase("GET")) {
+            int indice;
+            try {
+                indice = Integer.parseInt(partes[2]);
+            } catch (NumberFormatException e) {
+                indice = -1;                                // índice no numérico -> 404
+            }
+            Empleado e = obtener(indice);
+            if (e == null) {
+                responder(ex, 404, "{\"error\": \"Empleado no encontrado\"}");
+                return;
+            }
+            String json = "{\"nombre\": " + jsonTexto(e.getNombre())
+                    + ", \"salario\": " + numero(e.calcularSalario()) + "}";
+            responder(ex, 200, json);
+            return;
+        }
+
+        responder(ex, 404, "{\"error\": \"Ruta no encontrada\"}");
+    }
+
+    // =====================================================================
+    // Escritura desde la API (la interfaz React usa estos endpoints)
+    // =====================================================================
+
+    /** POST /empleados: crea un empleado con los campos del cuerpo JSON. */
+    private static void crearDesdeApi(HttpExchange ex) throws IOException {
+        try {
+            Map<String, String> d = leerJson(ex);
+            Empleado nuevo = new Empleado(
+                    obligatorio(d, "nombre"),
+                    numeroDe(obligatorio(d, "salarioHora"), "salarioHora"),
+                    enteroDe(obligatorio(d, "horasTrabajadas"), "horasTrabajadas"),
+                    numeroDe(d.getOrDefault("bonificacion", "0"), "bonificacion"));
+            int pos = agregar(nuevo);
+            responder(ex, 201, "{\"indice\": " + pos + "}");
+        } catch (IllegalArgumentException e) {
+            responder(ex, 400, errorJson(e.getMessage()));
+        }
+    }
+
+    /**
+     * PUT /empleados/{i}: actualiza los campos enviados. Todo se valida antes
+     * de tocar el objeto, así que una entrada inválida no deja cambios a medias.
