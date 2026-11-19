@@ -478,3 +478,51 @@ public class Main {
         }
         return valor;
     }
+
+    private static double numeroDe(String texto, String campo) {
+        try {
+            double v = Double.parseDouble(texto.trim().replace(',', '.'));
+            if (Double.isNaN(v) || Double.isInfinite(v) || v < 0) {
+                throw new IllegalArgumentException("El campo '" + campo + "' no puede ser negativo.");
+            }
+            return v;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("El campo '" + campo + "' debe ser un número.");
+        }
+    }
+
+    private static int enteroDe(String texto, String campo) {
+        try {
+            return Integer.parseInt(texto.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("El campo '" + campo + "' debe ser un entero.");
+        }
+    }
+
+    private static int parseIndice(String texto) {
+        try {
+            return Integer.parseInt(texto);
+        } catch (NumberFormatException e) {
+            return -1;                                      // no numérico -> no existe
+        }
+    }
+
+    private static String errorJson(String mensaje) {
+        return "{\"error\": " + jsonTexto(mensaje) + "}";
+    }
+
+    /** Construye la lista de empleados en JSON a mano. */
+    private static String listaJson() {
+        List<Empleado> copia;
+        synchronized (empleados) {
+            copia = new ArrayList<>(empleados);
+        }
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < copia.size(); i++) {
+            Empleado e = copia.get(i);
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append("{\"indice\": ").append(i)
+              .append(", \"nombre\": ").append(jsonTexto(e.getNombre()))
+              .append(", \"salarioHora\": ").append(numero(e.getSalarioHora()))
