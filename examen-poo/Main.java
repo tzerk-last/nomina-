@@ -94,3 +94,51 @@ public class Main {
     private static void modificarAtributos() {
         int pos = seleccionarPosicion("Posición del objeto a modificar: ");
         if (pos < 0) {
+            return;                                    // no existe: volver al menú
+        }
+
+        Empleado e = obtener(pos);
+        System.out.println("Atributo a modificar:");
+        System.out.println("  1. Nombre   2. Salario por hora   3. Horas trabajadas   4. Bonificación");
+        int campo = leerEnteroEntre("Opción: ", 1, 4);
+
+        try {
+            switch (campo) {
+                case 1 -> e.setNombre(leerTexto("Nuevo nombre: "));
+                case 2 -> e.setSalarioHora(leerDecimalNoNegativo("Nuevo salario por hora: "));
+                case 3 -> e.setHorasTrabajadas(leerEnteroNoNegativo("Nuevas horas trabajadas: "));
+                case 4 -> e.setBonificacion(leerDecimalNoNegativo("Nueva bonificación: "));
+                default -> { }
+            }
+            System.out.println("Atributo actualizado.");
+        } catch (IllegalArgumentException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
+    }
+
+    /** Opción 4: muestra todos los objetos registrados. */
+    private static void visualizarObjetos() {
+        List<Empleado> copia;
+        synchronized (empleados) {
+            copia = new ArrayList<>(empleados);
+        }
+        if (copia.isEmpty()) {
+            System.out.println("No hay objetos registrados.");
+            return;
+        }
+
+        System.out.println("Objetos registrados:");
+        for (int i = 0; i < copia.size(); i++) {
+            Empleado e = copia.get(i);
+            System.out.println("  [" + i + "] " + e
+                    + " | salario calculado $" + String.format(Locale.US, "%,.2f", e.calcularSalario()));
+        }
+    }
+
+    /** Opción 5: ejecuta calcularSalario() sobre el objeto elegido. */
+    private static void calcularSalarioDeUno() {
+        int pos = seleccionarPosicion("Posición del objeto: ");
+        if (pos < 0) {
+            return;
+        }
+        Empleado e = obtener(pos);
