@@ -430,3 +430,51 @@ public class Main {
             String interior = lista.substring(1, lista.length() - 1).trim();
             if (interior.isEmpty()) {
                 throw new IllegalArgumentException("Debes enviar al menos un día.");
+            }
+            int total = 0;
+            for (String dia : interior.split(",")) {
+                int horas = enteroDe(dia, "horas");
+                if (horas < 0) {
+                    throw new IllegalArgumentException("No se aceptan horas negativas.");
+                }
+                if (horas > 24) {
+                    throw new IllegalArgumentException("Un día no puede tener más de 24 horas.");
+                }
+                total += horas;
+            }
+            synchronized (empleados) {
+                e.setHorasTrabajadas(total);
+            }
+            responder(ex, 200, "{\"horasTrabajadas\": " + total + "}");
+        } catch (IllegalArgumentException ex2) {
+            responder(ex, 400, errorJson(ex2.getMessage()));
+        }
+    }
+
+    /** Lee el cuerpo JSON plano (un objeto con valores de texto, números o listas). */
+    private static Map<String, String> leerJson(HttpExchange ex) throws IOException {
+        String cuerpo = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8).trim();
+        if (!cuerpo.startsWith("{") || !cuerpo.endsWith("}")) {
+            throw new IllegalArgumentException("El cuerpo debe ser un objeto JSON.");
+        }
+        Map<String, String> mapa = new HashMap<>();
+        // Grupo 2: texto entre comillas (grupo 3), lista [..] o valor sin comillas
+        Pattern p = Pattern.compile(
+                "\"([A-Za-z]+)\"\\s*:\\s*(\"((?:[^\"\\\\]|\\\\.)*)\"|\\[[^\\]]*\\]|[^,}\\]]+)");
+        Matcher m = p.matcher(cuerpo);
+        while (m.find()) {
+            String valor = m.group(3) != null
+                    ? m.group(3).replace("\\\"", "\"").replace("\\\\", "\\")
+                    : m.group(2).trim();
+            mapa.put(m.group(1), valor);
+        }
+        return mapa;
+    }
+
+    private static String obligatorio(Map<String, String> d, String campo) {
+        String valor = d.get(campo);
+        if (valor == null || valor.isBlank()) {
+            throw new IllegalArgumentException("Falta el campo '" + campo + "'.");
+        }
+        return valor;
+    }
