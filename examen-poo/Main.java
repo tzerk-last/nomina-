@@ -526,3 +526,47 @@ public class Main {
             sb.append("{\"indice\": ").append(i)
               .append(", \"nombre\": ").append(jsonTexto(e.getNombre()))
               .append(", \"salarioHora\": ").append(numero(e.getSalarioHora()))
+              .append(", \"horasTrabajadas\": ").append(e.getHorasTrabajadas())
+              .append(", \"bonificacion\": ").append(numero(e.getBonificacion()))
+              .append("}");
+        }
+        return sb.append("]").toString();
+    }
+
+    /** Escribe el cuerpo JSON con el código HTTP indicado. */
+    private static void responder(HttpExchange ex, int codigo, String cuerpo) throws IOException {
+        byte[] bytes = cuerpo.getBytes(StandardCharsets.UTF_8);
+        ex.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
+        ex.sendResponseHeaders(codigo, bytes.length);
+        try (OutputStream os = ex.getResponseBody()) {
+            os.write(bytes);
+        }
+    }
+
+    /** Escapa un texto para ponerlo entre comillas dentro de JSON. */
+    private static String jsonTexto(String texto) {
+        StringBuilder sb = new StringBuilder("\"");
+        for (char c : texto.toCharArray()) {
+            switch (c) {
+                case '"'  -> sb.append("\\\"");
+                case '\\' -> sb.append("\\\\");
+                case '\n' -> sb.append("\\n");
+                case '\r' -> sb.append("\\r");
+                case '\t' -> sb.append("\\t");
+                default -> {
+                    if (c < 0x20) {
+                        sb.append(String.format("\\u%04x", (int) c));
+                    } else {
+                        sb.append(c);
+                    }
+                }
+            }
+        }
+        return sb.append("\"").toString();
+    }
+
+    /** Formatea un número con punto decimal (válido en JSON). */
+    private static String numero(double valor) {
+        return String.format(Locale.US, "%.2f", valor);
+    }
+}
