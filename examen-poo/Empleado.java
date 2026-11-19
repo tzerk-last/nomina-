@@ -46,3 +46,27 @@ public class Empleado {
      *   - al total se suma la bonificación.
      */
     public double calcularSalario() {
+        int horasOrdinarias = Math.min(horasTrabajadas, HORAS_ORDINARIAS);
+        int horasExtra = Math.max(horasTrabajadas - HORAS_ORDINARIAS, 0);
+
+        double pagoOrdinario = horasOrdinarias * salarioHora;
+        double pagoExtra = horasExtra * salarioHora * FACTOR_EXTRA;
+
+        return pagoOrdinario + pagoExtra + bonificacion;
+    }
+
+    /**
+     * Pide con Scanner las horas trabajadas de cada uno de los días indicados.
+     * Cada valor se valida (no negativo, no más de 24 horas por día), se acumula
+     * y el total reemplaza a horasTrabajadas.
+     */
+    public void registrarHoras(int dias) {
+        if (dias <= 0) {
+            System.out.println("Error: el número de días debe ser mayor que cero.");
+            return;
+        }
+
+        int acumulado = 0;                     // suma de las horas de todos los días
+        for (int dia = 1; dia <= dias; dia++) {
+            acumulado += leerHorasDelDia(dia);
+        }
