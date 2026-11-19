@@ -94,3 +94,27 @@ public class Empleado {
             }
         }
     }
+
+    // ----- Getters -----
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public double getSalarioHora() {
+        return salarioHora;
+    }
+
+    public int getHorasTrabajadas() {
+        return horasTrabajadas;
+    }
+
+    public double getBonificacion() {
+        return bonificacion;
+    }
+
+    // ----- Setters (validan los datos) -----
+
+    public void setNombre(String nombre) {
+        this.nombre = validarNombre(nombre);
+    }
