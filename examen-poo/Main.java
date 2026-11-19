@@ -190,3 +190,51 @@ public class Main {
      */
     private static int seleccionarPosicion(String mensaje) {
         if (tamanio() == 0) {
+            System.out.println("No hay objetos registrados.");
+            return -1;
+        }
+        visualizarObjetos();
+        int pos = leerEntero(mensaje);
+        if (pos < 0 || pos >= tamanio()) {
+            System.out.println("Error: no existe un objeto en la posición " + pos + ".");
+            return -1;
+        }
+        return pos;
+    }
+
+    // =====================================================================
+    // Lectura y validación de datos por consola
+    // =====================================================================
+
+    /** Pide un texto no vacío. */
+    private static String leerTexto(String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            String texto = Empleado.ENTRADA.nextLine().trim();
+            if (!texto.isEmpty()) {
+                return texto;
+            }
+            System.out.println("Error: el valor no puede estar vacío.");
+        }
+    }
+
+    /** Pide un entero; repite la pregunta si el texto no es un número. */
+    private static int leerEntero(String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            String texto = Empleado.ENTRADA.nextLine().trim();
+            try {
+                return Integer.parseInt(texto);
+            } catch (NumberFormatException e) {
+                System.out.println("Error: escribe un número entero.");
+            }
+        }
+    }
+
+    /** Pide un entero dentro de un rango [min, max]. */
+    private static int leerEnteroEntre(String mensaje, int min, int max) {
+        while (true) {
+            int valor = leerEntero(mensaje);
+            if (valor >= min && valor <= max) {
+                return valor;
+            }
