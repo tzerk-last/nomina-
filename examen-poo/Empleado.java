@@ -70,3 +70,27 @@ public class Empleado {
         for (int dia = 1; dia <= dias; dia++) {
             acumulado += leerHorasDelDia(dia);
         }
+
+        horasTrabajadas = acumulado;           // actualiza el atributo
+        System.out.println("Horas registradas. Total: " + horasTrabajadas + " h.");
+    }
+
+    /** Lee las horas de un día y repite la pregunta hasta obtener un valor válido. */
+    private int leerHorasDelDia(int dia) {
+        while (true) {
+            System.out.print("Horas trabajadas el día " + dia + ": ");
+            String texto = ENTRADA.nextLine().trim();
+            try {
+                int horas = Integer.parseInt(texto);
+                if (horas < 0) {
+                    System.out.println("Error: no se aceptan horas negativas.");
+                } else if (horas > MAX_HORAS_DIA) {
+                    System.out.println("Error: un día no puede tener más de " + MAX_HORAS_DIA + " horas.");
+                } else {
+                    return horas;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Error: escribe un número entero.");
+            }
+        }
+    }
