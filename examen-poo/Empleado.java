@@ -142,3 +142,22 @@ public class Empleado {
 
     private static double validarNoNegativo(double valor, String campo) {
         if (Double.isNaN(valor) || valor < 0) {
+            throw new IllegalArgumentException(campo + " no puede ser negativo.");
+        }
+        return valor;
+    }
+
+    private static int validarHoras(int horas) {
+        if (horas < 0) {
+            throw new IllegalArgumentException("Las horas trabajadas no pueden ser negativas.");
+        }
+        return horas;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(java.util.Locale.US,
+                "%s | $%.2f/h | %d h | bonificación $%.2f",
+                nombre, salarioHora, horasTrabajadas, bonificacion);
+    }
+}
