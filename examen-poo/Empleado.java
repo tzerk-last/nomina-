@@ -22,3 +22,27 @@ public class Empleado {
     private int horasTrabajadas;
     private double bonificacion;
 
+    // ----- Constructores -----
+
+    /** Constructor por defecto. */
+    public Empleado() {
+        this("Sin asignar", 10000, 40, 0);
+    }
+
+    /** Constructor con parámetros. Cada valor se valida antes de asignarse. */
+    public Empleado(String nombre, double salarioHora, int horasTrabajadas, double bonificacion) {
+        this.nombre = validarNombre(nombre);
+        this.salarioHora = validarNoNegativo(salarioHora, "El salario por hora");
+        this.horasTrabajadas = validarHoras(horasTrabajadas);
+        this.bonificacion = validarNoNegativo(bonificacion, "La bonificación");
+    }
+
+    // ----- Métodos de comportamiento -----
+
+    /**
+     * Calcula el salario semanal:
+     *   - hasta 40 horas se pagan al salario por hora;
+     *   - las horas por encima de 40 se pagan al 150%;
+     *   - al total se suma la bonificación.
+     */
+    public double calcularSalario() {
