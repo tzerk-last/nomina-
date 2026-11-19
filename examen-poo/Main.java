@@ -142,3 +142,51 @@ public class Main {
             return;
         }
         Empleado e = obtener(pos);
+        System.out.println(String.format(Locale.US, "Salario de %s: $%,.2f",
+                e.getNombre(), e.calcularSalario()));
+    }
+
+    /** Opción 6: ejecuta registrarHoras(dias) sobre el objeto elegido. */
+    private static void registrarHorasDeUno() {
+        int pos = seleccionarPosicion("Posición del objeto: ");
+        if (pos < 0) {
+            return;
+        }
+        int dias = leerEnteroEntre("¿Cuántos días vas a registrar?: ", 1, Integer.MAX_VALUE);
+        obtener(pos).registrarHoras(dias);
+    }
+
+    // =====================================================================
+    // Manejo de la lista compartida
+    // =====================================================================
+
+    /** Agrega un objeto a la lista y devuelve su posición. */
+    private static int agregar(Empleado e) {
+        synchronized (empleados) {
+            empleados.add(e);
+            return empleados.size() - 1;
+        }
+    }
+
+    private static int tamanio() {
+        synchronized (empleados) {
+            return empleados.size();
+        }
+    }
+
+    /** Devuelve el objeto en la posición dada, o null si no existe. */
+    private static Empleado obtener(int pos) {
+        synchronized (empleados) {
+            if (pos < 0 || pos >= empleados.size()) {
+                return null;
+            }
+            return empleados.get(pos);
+        }
+    }
+
+    /**
+     * Muestra la lista, pide una posición y verifica que exista.
+     * Devuelve -1 si la lista está vacía o la posición no existe.
+     */
+    private static int seleccionarPosicion(String mensaje) {
+        if (tamanio() == 0) {
