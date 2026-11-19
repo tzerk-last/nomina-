@@ -286,3 +286,51 @@ public class Main {
                 servidor.start();
                 System.out.println("API REST escuchando en http://localhost:" + PUERTO);
             } catch (IOException e) {
+                System.out.println("No se pudo iniciar la API REST: " + e.getMessage());
+            }
+        }, "hilo-api-rest");
+        hilo.start();
+    }
+
+    /** Atiende GET /empleados y GET /empleados/{i}/salario. */
+    private static void manejarApi(HttpExchange ex) throws IOException {
+        // CORS: permite que un frontend React consuma la API
+        ex.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        ex.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+        ex.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+
+        String metodo = ex.getRequestMethod();
+        if (metodo.equalsIgnoreCase("OPTIONS")) {          // preflight CORS
+            ex.sendResponseHeaders(204, -1);
+            ex.close();
+            return;
+        }
+        String ruta = ex.getRequestURI().getPath();
+        if (ruta.length() > 1 && ruta.endsWith("/")) {
+            ruta = ruta.substring(0, ruta.length() - 1);
+        }
+        String[] partes = ruta.split("/");     // ["", "empleados", "{i}", "salario"...]
+
+        // GET /empleados
+        if (ruta.equals("/empleados") && metodo.equalsIgnoreCase("GET")) {
+            responder(ex, 200, listaJson());
+            return;
+        }
+
+        // POST /empleados  -> crear (extensión para la interfaz)
+        if (ruta.equals("/empleados") && metodo.equalsIgnoreCase("POST")) {
+            crearDesdeApi(ex);
+            return;
+        }
+
+        // PUT /empleados/{i}  -> modificar (extensión para la interfaz)
+        if (partes.length == 3 && partes[1].equals("empleados") && metodo.equalsIgnoreCase("PUT")) {
+            modificarDesdeApi(ex, partes[2]);
+            return;
+        }
+
+        // POST /empleados/{i}/horas  -> registrar horas por día (extensión)
+        if (partes.length == 4 && partes[1].equals("empleados") && partes[3].equals("horas")
+                && metodo.equalsIgnoreCase("POST")) {
+            registrarHorasDesdeApi(ex, partes[2]);
+            return;
