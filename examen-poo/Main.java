@@ -238,3 +238,51 @@ public class Main {
             if (valor >= min && valor <= max) {
                 return valor;
             }
+            System.out.println("Error: el valor debe estar entre " + min + " y " + max + ".");
+        }
+    }
+
+    /** Pide un entero que no sea negativo. */
+    private static int leerEnteroNoNegativo(String mensaje) {
+        while (true) {
+            int valor = leerEntero(mensaje);
+            if (valor >= 0) {
+                return valor;
+            }
+            System.out.println("Error: no se aceptan valores negativos.");
+        }
+    }
+
+    /** Pide un número decimal que no sea negativo. Acepta coma o punto. */
+    private static double leerDecimalNoNegativo(String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            String texto = Empleado.ENTRADA.nextLine().trim().replace(',', '.');
+            try {
+                double valor = Double.parseDouble(texto);
+                if (Double.isNaN(valor) || Double.isInfinite(valor)) {
+                    System.out.println("Error: escribe un número válido.");
+                } else if (valor < 0) {
+                    System.out.println("Error: no se aceptan valores negativos.");
+                } else {
+                    return valor;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Error: escribe un número válido.");
+            }
+        }
+    }
+
+    // =====================================================================
+    // API REST (com.sun.net.httpserver, puerto 8080, hilo aparte)
+    // =====================================================================
+
+    /** Crea el servidor HTTP en un hilo aparte para que el menú siga funcionando. */
+    private static void iniciarApiEnHilo() {
+        Thread hilo = new Thread(() -> {
+            try {
+                servidor = HttpServer.create(new InetSocketAddress(PUERTO), 0);
+                servidor.createContext("/empleados", Main::manejarApi);
+                servidor.start();
+                System.out.println("API REST escuchando en http://localhost:" + PUERTO);
+            } catch (IOException e) {
