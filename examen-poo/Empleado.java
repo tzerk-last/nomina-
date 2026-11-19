@@ -118,3 +118,27 @@ public class Empleado {
     public void setNombre(String nombre) {
         this.nombre = validarNombre(nombre);
     }
+
+    public void setSalarioHora(double salarioHora) {
+        this.salarioHora = validarNoNegativo(salarioHora, "El salario por hora");
+    }
+
+    public void setHorasTrabajadas(int horasTrabajadas) {
+        this.horasTrabajadas = validarHoras(horasTrabajadas);
+    }
+
+    public void setBonificacion(double bonificacion) {
+        this.bonificacion = validarNoNegativo(bonificacion, "La bonificación");
+    }
+
+    // ----- Validaciones (static: no se pueden sobrescribir desde el constructor) -----
+
+    private static String validarNombre(String nombre) {
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El nombre no puede estar vacío.");
+        }
+        return nombre.trim();
+    }
+
+    private static double validarNoNegativo(double valor, String campo) {
+        if (Double.isNaN(valor) || valor < 0) {
